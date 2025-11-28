@@ -9,6 +9,8 @@ import Communities from './pages/Communities';
 import Profile from './pages/Profile';
 import Notifications from './pages/Notifications'; 
 import Saved from './pages/Saved';
+import Analytics from './pages/Analytics';
+import RSSFeed from './pages/RSSFeed';
 
 const ProtectedRoute = ({ children }) => {
   const { user, userData, loading } = useAuth();
@@ -39,6 +41,8 @@ export default function App() {
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
           <Route path="/saved" element={<ProtectedRoute><Saved /></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+          <Route path="/rss" element={<ProtectedRoute><RSSFeed /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

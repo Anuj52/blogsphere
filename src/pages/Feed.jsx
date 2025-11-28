@@ -13,6 +13,7 @@ import EditPostModal from '../components/feed/EditPostModal';
 export default function Feed() {
   const { user, userData } = useAuth();
   const [posts, setPosts] = useState([]);
+  const [trendingPosts, setTrendingPosts] = useState([]);
   
   // States
   const [feedType, setFeedType] = useState("global");
@@ -38,6 +39,17 @@ export default function Feed() {
     });
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (feedType === 'trending') {
+      const sorted = [...posts].sort((a, b) => {
+        const scoreA = (a.views || 0) + (a.likes?.length || 0) * 5;
+        const scoreB = (b.views || 0) + (b.likes?.length || 0) * 5;
+        return scoreB - scoreA;
+      });
+      setTrendingPosts(sorted);
+    }
+  }, [feedType, posts]);
 
   const handlePost = async () => {
     if (!title.trim() || !content.trim()) return;
@@ -119,7 +131,9 @@ export default function Feed() {
     incrementView(id); 
   };
 
-  const filteredPosts = posts.filter(post => {
+  const postsToDisplay = feedType === 'trending' ? trendingPosts : posts;
+
+  const filteredPosts = postsToDisplay.filter(post => {
     const matchesSearch = post.title?.toLowerCase().includes(searchTerm.toLowerCase()) || post.content?.toLowerCase().includes(searchTerm.toLowerCase()) || post.category?.toLowerCase().includes(searchTerm.toLowerCase());
     if (feedType === 'following') {
         return matchesSearch && (userData?.following || []).includes(post.uid);

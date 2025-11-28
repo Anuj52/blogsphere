@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, Users, Search } from 'lucide-react';
+import { Globe, Users, Search, Flame } from 'lucide-react';
 
 export default function FeedHeader({ feedType, setFeedType, searchTerm, setSearchTerm }) {
   return (
@@ -18,6 +18,12 @@ export default function FeedHeader({ feedType, setFeedType, searchTerm, setSearc
             className={`flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-300 font-medium text-sm ${feedType === 'following' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/20' : 'text-indigo-300 hover:text-white hover:bg-white/5'}`}
         >
             <Users size={16}/> Following
+        </button>
+        <button 
+            onClick={() => setFeedType('trending')}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg transition-all duration-300 font-medium text-sm ${feedType === 'trending' ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/20' : 'text-indigo-300 hover:text-white hover:bg-white/5'}`}
+        >
+            <Flame size={16}/> Trending
         </button>
       </div>
 

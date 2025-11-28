@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LogOut, Hash, Users, User, LayoutGrid, Menu, X, Bell, Bookmark } from 'lucide-react';
+import { LogOut, Hash, Users, User, LayoutGrid, Menu, X, Bell, Bookmark, BarChart2, Rss } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase-config';
 import { useAuth } from '../AuthContext';
@@ -64,6 +64,8 @@ export default function Layout({ children }) {
               <SidebarItem icon={<Bell size={22} />} label="Notifications" path="/notifications" />
               <SidebarItem icon={<Bookmark size={22} />} label="Saved" path="/saved" />
               <SidebarItem icon={<User size={22} />} label="Profile" path="/profile" />
+              <SidebarItem icon={<BarChart2 size={22} />} label="Analytics" path="/analytics" />
+              <SidebarItem icon={<Rss size={22} />} label="RSS Feed" path="/rss" />
             </nav>
           </div>
           <div className="p-6 mt-auto xl:pl-4 xl:pb-8">

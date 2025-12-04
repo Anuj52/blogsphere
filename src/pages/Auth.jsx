@@ -13,6 +13,21 @@ export default function Auth() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [user, setUser] = useState(null); // Local state for auth check isn't enough, need context
+
+  // We need to check auth state. Ideally import useAuth, but for now let's use onAuthStateChanged locally or import useAuth
+  // Let's use the standard firebase auth check for simplicity in this file without adding context dependency if not needed, 
+  // BUT we already have AuthContext. Let's use it.
+
+  // Wait, I need to import useAuth first.
+  // actually, let's just use the existing auth import.
+
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      if (u) navigate('/feed');
+    });
+    return unsubscribe;
+  }, [navigate]);
 
   const handleAuth = async (e) => {
     e.preventDefault();

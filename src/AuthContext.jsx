@@ -20,6 +20,11 @@ export const AuthProvider = ({ children }) => {
         const unsubUserData = onSnapshot(doc(db, 'users', currentUser.uid), (doc) => {
           setUserData(doc.exists() ? doc.data() : null);
           setLoading(false);
+        }, (error) => {
+          console.error("AuthContext Snapshot Error:", error);
+          // If permission denied or other error, stop loading so app doesn't hang
+          setUserData(null);
+          setLoading(false);
         });
         return () => unsubUserData();
       } else {

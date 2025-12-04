@@ -66,19 +66,19 @@ export default function Analytics() {
   }, [user]);
 
   const StatCard = ({ icon, label, value, color }) => (
-    <GlassCard className={`bg-slate-900/60 border-${color}-500/20 backdrop-blur-xl p-6 flex flex-col items-center justify-center text-center`}>
-      <div className={`p-3 bg-${color}-500/10 rounded-full mb-4 text-${color}-400`}>
+    <GlassCard className={`bg-white/60 dark:bg-slate-900/60 border-${color}-500/20 backdrop-blur-xl p-6 flex flex-col items-center justify-center text-center`}>
+      <div className={`p-3 bg-${color}-500/10 rounded-full mb-4 text-${color}-600 dark:text-${color}-400`}>
         {icon}
       </div>
-      <p className="text-3xl font-bold text-white">{value}</p>
-      <p className={`text-sm font-medium text-white/50`}>{label}</p>
+      <p className="text-3xl font-bold text-slate-900 dark:text-white">{value}</p>
+      <p className={`text-sm font-medium text-slate-500 dark:text-white/50`}>{label}</p>
     </GlassCard>
   );
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 text-white">
+    <div className="p-4 sm:p-6 md:p-8 text-slate-900 dark:text-white">
       <h1 className="text-3xl font-bold mb-8 flex items-center gap-3"><BarChart2 size={28} /> Author Analytics</h1>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard icon={<FileText />} label="Total Posts" value={stats.totalPosts} color="indigo" />
         <StatCard icon={<Eye />} label="Total Views" value={stats.totalViews} color="cyan" />
@@ -92,9 +92,9 @@ export default function Analytics() {
       <div className="space-y-4">
         {posts.length > 0 ? (
           posts.map(post => (
-            <GlassCard key={post.id} className="bg-slate-900/60 border-indigo-500/20 p-4 flex justify-between items-center">
-              <p className="font-semibold truncate">{post.title}</p>
-              <div className="flex items-center gap-4 text-sm">
+            <GlassCard key={post.id} className="bg-white/60 dark:bg-slate-900/60 border-slate-200 dark:border-indigo-500/20 p-4 flex justify-between items-center">
+              <p className="font-semibold truncate text-slate-900 dark:text-white">{post.title}</p>
+              <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-white/80">
                 <span className="flex items-center gap-1.5"><Eye size={14} /> {post.views || 0}</span>
                 <span className="flex items-center gap-1.5"><Heart size={14} /> {post.likes ? post.likes.length : 0}</span>
                 <span className="flex items-center gap-1.5"><MessageSquare size={14} /> {post.comments ? post.comments.length : 0}</span>
@@ -104,7 +104,7 @@ export default function Analytics() {
             </GlassCard>
           ))
         ) : (
-          <p className="text-white/50">You haven't written any posts yet.</p>
+          <p className="text-slate-500 dark:text-white/50">You haven't written any posts yet.</p>
         )}
       </div>
     </div>

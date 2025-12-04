@@ -17,13 +17,13 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchMyPosts = async () => {
-        if(!user) return;
-        const q = query(collection(db, "posts"), where("uid", "==", user.uid), orderBy("createdAt", "desc"));
-        const snap = await getDocs(q);
-        const posts = snap.docs.map(d => ({id: d.id, ...d.data()}));
-        setMyPosts(posts);
-        const likes = posts.reduce((acc, curr) => acc + (curr.likes?.length || 0), 0);
-        setTotalLikes(likes);
+      if (!user) return;
+      const q = query(collection(db, "posts"), where("uid", "==", user.uid), orderBy("createdAt", "desc"));
+      const snap = await getDocs(q);
+      const posts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setMyPosts(posts);
+      const likes = posts.reduce((acc, curr) => acc + (curr.likes?.length || 0), 0);
+      setTotalLikes(likes);
     };
     fetchMyPosts();
   }, [user]);
@@ -58,106 +58,106 @@ export default function Profile() {
 
   return (
     <div className="max-w-4xl mx-auto pb-20">
-        <div className="relative mb-8">
-            <div className="h-48 rounded-t-2xl bg-gradient-to-r from-indigo-900 to-purple-900 w-full absolute top-0 left-0 -z-10 border-x border-t border-white/10"></div>
-            
-            <GlassCard className="mt-32 pt-0 border-t-0 text-center relative overflow-visible">
-                <div className="absolute top-4 right-4">
-                  {isEditing ? (
-                    <div className="flex gap-2">
-                      <button onClick={() => setIsEditing(false)} className="p-2 bg-red-500/20 text-red-400 rounded-lg"><X size={18}/></button>
-                      <button onClick={handleSave} className="p-2 bg-green-500/20 text-green-400 rounded-lg"><Save size={18}/></button>
-                    </div>
-                  ) : (
-                    <button onClick={() => setIsEditing(true)} className="p-2 bg-white/10 text-white rounded-lg hover:bg-white/20"><Edit2 size={18}/></button>
-                  )}
+      <div className="relative mb-8">
+        <div className="h-48 rounded-t-2xl bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-900 dark:to-purple-900 w-full absolute top-0 left-0 -z-10 border-x border-t border-slate-200 dark:border-white/10"></div>
+
+        <GlassCard className="mt-32 pt-0 border-t-0 text-center relative overflow-visible bg-white/80 dark:bg-slate-900/60 backdrop-blur-xl">
+          <div className="absolute top-4 right-4">
+            {isEditing ? (
+              <div className="flex gap-2">
+                <button onClick={() => setIsEditing(false)} className="p-2 bg-red-500/20 text-red-500 dark:text-red-400 rounded-lg"><X size={18} /></button>
+                <button onClick={handleSave} className="p-2 bg-green-500/20 text-green-600 dark:text-green-400 rounded-lg"><Save size={18} /></button>
+              </div>
+            ) : (
+              <button onClick={() => setIsEditing(true)} className="p-2 bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-white rounded-lg hover:bg-slate-200 dark:hover:bg-white/20"><Edit2 size={18} /></button>
+            )}
+          </div>
+
+          <div className="-mt-16 mb-4 relative inline-block">
+            <Avatar seed={userData?.username} size="xl" className="shadow-2xl ring-4 ring-white dark:ring-slate-900" />
+            <div className="absolute bottom-0 right-0 bg-white dark:bg-slate-900 rounded-full p-1">
+              <div className="bg-indigo-600 px-2 py-0.5 rounded-full text-[10px] font-bold text-white border border-white/10">Lvl {Math.floor(totalLikes / 5) + 1}</div>
+            </div>
+          </div>
+
+          {isEditing ? (
+            <div className="space-y-3 max-w-sm mx-auto">
+              <input value={editForm.fullName} onChange={e => setEditForm({ ...editForm, fullName: e.target.value })} className="w-full p-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-center font-bold text-xl text-slate-900 dark:text-white" />
+              <textarea value={editForm.bio} onChange={e => setEditForm({ ...editForm, bio: e.target.value })} className="w-full p-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-slate-700 dark:text-white text-sm" rows="3" />
+              <input value={editForm.location} onChange={e => setEditForm({ ...editForm, location: e.target.value })} className="w-full p-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded text-center text-sm text-slate-700 dark:text-white" placeholder="Location" />
+            </div>
+          ) : (
+            <>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center justify-center gap-2">
+                {userData?.fullName}
+                {rank === "Legend" && <Trophy size={24} className="text-yellow-400" fill="currentColor" />}
+              </h2>
+              <p className={`font-bold text-sm mb-1 flex items-center justify-center gap-1 ${rankColor}`}><Star size={12} fill="currentColor" /> {rank}</p>
+              <p className="text-slate-500 dark:text-indigo-400/60 font-medium mb-4 text-sm">@{userData?.username}</p>
+              <p className="text-slate-600 dark:text-indigo-100 max-w-md mx-auto mb-6 leading-relaxed">{userData?.bio || "No bio yet."}</p>
+
+              <div className="flex justify-center gap-8 mb-6 border-y border-slate-200 dark:border-white/10 py-4">
+                <div className="text-center">
+                  <div className="text-xl font-bold text-slate-900 dark:text-white">{userData?.communities?.length || 0}</div>
+                  <div className="text-xs text-slate-500 dark:text-indigo-300">Tribes</div>
                 </div>
-
-                <div className="-mt-16 mb-4 relative inline-block">
-                   <Avatar seed={userData?.username} size="xl" className="shadow-2xl ring-4 ring-slate-900" />
-                   <div className="absolute bottom-0 right-0 bg-slate-900 rounded-full p-1">
-                      <div className="bg-indigo-600 px-2 py-0.5 rounded-full text-[10px] font-bold text-white border border-white/10">Lvl {Math.floor(totalLikes / 5) + 1}</div>
-                   </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-slate-900 dark:text-white">{userData?.following?.length || 0}</div>
+                  <div className="text-xs text-slate-500 dark:text-indigo-300">Following</div>
                 </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-slate-900 dark:text-white">{totalLikes}</div>
+                  <div className="text-xs text-slate-500 dark:text-indigo-300">Reputation</div>
+                </div>
+              </div>
+            </>
+          )}
+        </GlassCard>
+      </div>
 
-                {isEditing ? (
-                   <div className="space-y-3 max-w-sm mx-auto">
-                    <input value={editForm.fullName} onChange={e => setEditForm({...editForm, fullName: e.target.value})} className="w-full p-2 bg-white/5 border border-white/10 rounded text-center font-bold text-xl text-white" />
-                    <textarea value={editForm.bio} onChange={e => setEditForm({...editForm, bio: e.target.value})} className="w-full p-2 bg-white/5 border border-white/10 rounded text-white text-sm" rows="3" />
-                    <input value={editForm.location} onChange={e => setEditForm({...editForm, location: e.target.value})} className="w-full p-2 bg-white/5 border border-white/10 rounded text-center text-sm text-white" placeholder="Location" />
-                  </div>
-                ) : (
-                  <>
-                    <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-2">
-                        {userData?.fullName} 
-                        {rank === "Legend" && <Trophy size={24} className="text-yellow-400" fill="currentColor"/>}
-                    </h2>
-                    <p className={`font-bold text-sm mb-1 flex items-center justify-center gap-1 ${rankColor}`}><Star size={12} fill="currentColor" /> {rank}</p>
-                    <p className="text-indigo-400/60 font-medium mb-4 text-sm">@{userData?.username}</p>
-                    <p className="text-indigo-100 max-w-md mx-auto mb-6 leading-relaxed">{userData?.bio || "No bio yet."}</p>
-                    
-                    <div className="flex justify-center gap-8 mb-6 border-y border-white/10 py-4">
-                        <div className="text-center">
-                            <div className="text-xl font-bold text-white">{userData?.communities?.length || 0}</div>
-                            <div className="text-xs text-indigo-300">Tribes</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-xl font-bold text-white">{userData?.following?.length || 0}</div>
-                            <div className="text-xs text-indigo-300">Following</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-xl font-bold text-white">{totalLikes}</div>
-                            <div className="text-xs text-indigo-300">Reputation</div>
-                        </div>
-                    </div>
-                  </>
-                )}
-            </GlassCard>
-        </div>
+      <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-white/10 pb-2 px-4">
+        <button className={`pb-2 text-sm font-bold flex items-center gap-2 transition text-indigo-600 dark:text-white border-b-2 border-indigo-600 dark:border-indigo-500`}>
+          <LayoutGrid size={16} /> My Posts
+        </button>
+      </div>
 
-        <div className="flex gap-4 mb-6 border-b border-white/10 pb-2 px-4">
-            <button className={`pb-2 text-sm font-bold flex items-center gap-2 transition text-white border-b-2 border-indigo-500`}>
-                <LayoutGrid size={16}/> My Posts
-            </button>
-        </div>
+      <div className="space-y-4">
+        {sortedPosts.length === 0 && <p className="text-center text-slate-500 dark:text-white/20 py-10">You haven't posted anything yet.</p>}
 
-        <div className="space-y-4">
-            {sortedPosts.length === 0 && <p className="text-center text-white/20 py-10">You haven't posted anything yet.</p>}
-            
-            {sortedPosts.map(post => {
-                const isPinned = post.id === userData?.pinnedPostId;
-                return (
-                    <div key={post.id} className="relative group">
-                        {isPinned && (
-                            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-xs px-3 py-1 rounded-full shadow-lg z-10 flex items-center gap-1">
-                                <Pin size={12} fill="currentColor" /> Pinned Post
-                            </div>
-                        )}
-                        
-                        <div className="relative">
-                             {/* PIN ACTION BUTTON */}
-                            <button 
-                                onClick={() => togglePin(post.id)}
-                                className={`absolute top-4 right-14 p-2 rounded-full transition z-20 ${isPinned ? 'text-indigo-400 bg-indigo-500/20' : 'text-white/20 hover:text-indigo-400 hover:bg-white/10'}`}
-                                title={isPinned ? "Unpin Post" : "Pin to Profile"}
-                            >
-                                <Pin size={18} fill={isPinned ? "currentColor" : "none"} />
-                            </button>
+        {sortedPosts.map(post => {
+          const isPinned = post.id === userData?.pinnedPostId;
+          return (
+            <div key={post.id} className="relative group">
+              {isPinned && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white text-xs px-3 py-1 rounded-full shadow-lg z-10 flex items-center gap-1">
+                  <Pin size={12} fill="currentColor" /> Pinned Post
+                </div>
+              )}
 
-                            <PostCard 
-                                post={post} 
-                                user={user} 
-                                userData={userData}
-                                toggleLike={() => {}} 
-                                toggleFollow={() => {}}
-                                deletePost={() => {}} // Disabled delete in profile view for safety/simplicity
-                                openModal={() => {}}
-                            />
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
+              <div className="relative">
+                {/* PIN ACTION BUTTON */}
+                <button
+                  onClick={() => togglePin(post.id)}
+                  className={`absolute top-4 right-14 p-2 rounded-full transition z-20 ${isPinned ? 'text-indigo-400 bg-indigo-500/20' : 'text-white/20 hover:text-indigo-400 hover:bg-white/10'}`}
+                  title={isPinned ? "Unpin Post" : "Pin to Profile"}
+                >
+                  <Pin size={18} fill={isPinned ? "currentColor" : "none"} />
+                </button>
+
+                <PostCard
+                  post={post}
+                  user={user}
+                  userData={userData}
+                  toggleLike={() => { }}
+                  toggleFollow={() => { }}
+                  deletePost={() => { }} // Disabled delete in profile view for safety/simplicity
+                  openModal={() => { }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

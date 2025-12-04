@@ -10,13 +10,13 @@ import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../../firebase-config';
 
 export default function PostCard({ post, user, userData, toggleLike, toggleRepost, deletePost, openModal, onEdit }) {
-  
+
   const isMe = user?.uid && post?.uid && user.uid === post.uid;
-  
+
   const likesArray = Array.isArray(post.likes) ? post.likes : [];
   const repostsArray = Array.isArray(post.reposts) ? post.reposts : [];
   const savedArray = Array.isArray(post.savedBy) ? post.savedBy : [];
-  
+
   const commentsCount = Array.isArray(post.comments) ? post.comments.length : 0;
   const viewsCount = post.views || 0;
 
@@ -40,24 +40,24 @@ export default function PostCard({ post, user, userData, toggleLike, toggleRepos
     e.stopPropagation();
     const ref = doc(db, "posts", post.id);
     if (isSaved) {
-        await updateDoc(ref, { savedBy: arrayRemove(user.uid) });
-        toast("Removed from Saved", { icon: '🗑️' });
+      await updateDoc(ref, { savedBy: arrayRemove(user.uid) });
+      toast("Removed from Saved", { icon: '🗑️' });
     } else {
-        await updateDoc(ref, { savedBy: arrayUnion(user.uid) });
-        toast.success("Saved for later");
+      await updateDoc(ref, { savedBy: arrayUnion(user.uid) });
+      toast.success("Saved for later");
     }
   };
 
   return (
     <GlassCard className={`
         transition-all duration-300 hover:scale-[1.01] hover:shadow-2xl group relative
-        ${isHot ? 'border-orange-500/30 shadow-orange-500/10 bg-gradient-to-b from-slate-900/60 to-orange-900/10' : 'hover:bg-slate-800/40 border-white/5 hover:border-indigo-500/30'}
+        ${isHot ? 'border-orange-500/30 shadow-orange-500/10 bg-gradient-to-b from-orange-50 to-orange-100 dark:from-slate-900/60 dark:to-orange-900/10' : 'hover:bg-slate-50 dark:hover:bg-slate-800/40 border-slate-200 dark:border-white/5 hover:border-indigo-500/30'}
     `}>
-      
+
       {/* Meta Row */}
       <div className="flex items-center gap-3 mb-4">
-          {isReposted && <div className="flex items-center gap-1 text-xs text-emerald-400 font-bold uppercase tracking-wider"><Repeat size={12} /> You boosted</div>}
-          {isHot && <div className="flex items-center gap-1 text-xs text-orange-400 font-bold uppercase tracking-wider animate-pulse"><Flame size={12} fill="currentColor" /> Trending</div>}
+        {isReposted && <div className="flex items-center gap-1 text-xs text-emerald-500 dark:text-emerald-400 font-bold uppercase tracking-wider"><Repeat size={12} /> You boosted</div>}
+        {isHot && <div className="flex items-center gap-1 text-xs text-orange-500 dark:text-orange-400 font-bold uppercase tracking-wider animate-pulse"><Flame size={12} fill="currentColor" /> Trending</div>}
       </div>
 
       {/* Header */}
@@ -66,77 +66,79 @@ export default function PostCard({ post, user, userData, toggleLike, toggleRepos
           <Avatar seed={post.username} size="md" />
           <div>
             <div className="flex items-center gap-2">
-                <h3 className="font-bold text-white group-hover:text-indigo-200 transition-colors">{post.authorName}</h3>
-                {isVerified && <BadgeCheck size={16} className="text-blue-400 fill-blue-400/10" />}
-                <FollowButton targetUserId={post.uid} targetUserName={post.authorName} className="ml-1 text-xs py-1 px-3"/>
+              <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-200 transition-colors">{post.authorName}</h3>
+              {isVerified && <BadgeCheck size={16} className="text-blue-500 dark:text-blue-400 fill-blue-500/10 dark:fill-blue-400/10" />}
+              <FollowButton targetUserId={post.uid} targetUserName={post.authorName} className="ml-1 text-xs py-1 px-3" />
             </div>
-            <div className="flex items-center gap-2 text-xs text-indigo-400/60">
+            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-indigo-400/60">
               <span>@{post.username}</span>
               <span>•</span>
               <span>{post.createdAt && formatDistanceToNow(post.createdAt.toDate(), { addSuffix: true })}</span>
-              {post.isEdited && <span className="italic text-white/20">(edited)</span>}
+              {post.isEdited && <span className="italic text-slate-400 dark:text-white/20">(edited)</span>}
             </div>
           </div>
         </div>
-        
+
         {/* Action Buttons */}
-        {isMe && (
-          <div className="flex gap-2">
-             <button 
-                onClick={(e) => { e.stopPropagation(); onEdit(post); }} 
-                className="text-white/20 hover:text-indigo-400 p-2 transition-colors rounded-full hover:bg-indigo-500/10"
-                title="Edit Post"
-             >
-                <Edit2 size={16} />
-             </button>
-             <button 
-                onClick={(e) => { e.stopPropagation(); deletePost(post.id); }} 
-                className="text-white/20 hover:text-red-400 p-2 transition-colors rounded-full hover:bg-red-500/10"
-                title="Delete Post"
-             >
-                <Trash2 size={16} />
-             </button>
-          </div>
-        )}
+        <div className="flex gap-2">
+          {isMe && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onEdit(post); }}
+              className="text-slate-400 dark:text-white/20 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 transition-colors rounded-full hover:bg-indigo-50 dark:hover:bg-indigo-500/10"
+              title="Edit Post"
+            >
+              <Edit2 size={16} />
+            </button>
+          )}
+          {(isMe || userData?.role === 'admin') && (
+            <button
+              onClick={(e) => { e.stopPropagation(); deletePost(post.id); }}
+              className="text-slate-400 dark:text-white/20 hover:text-red-600 dark:hover:text-red-400 p-2 transition-colors rounded-full hover:bg-red-50 dark:hover:bg-red-500/10"
+              title="Delete Post"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Content */}
       <div className="cursor-pointer" onClick={() => openModal(post)}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex gap-2">
-                {post.category && post.category !== "" && (
-                    <span className="inline-block px-2.5 py-1 bg-indigo-500/10 text-indigo-300 text-[10px] font-bold rounded-md border border-indigo-500/20 uppercase tracking-wider">
-                        {post.category}
-                    </span>
-                )}
-                <span className="inline-flex items-center gap-1 px-2 py-1 text-indigo-400/50 text-[10px] font-medium">
-                    <Clock size={10} /> {readTime} min read
-                </span>
-            </div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex gap-2">
+            {post.category && post.category !== "" && (
+              <span className="inline-block px-2.5 py-1 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 text-[10px] font-bold rounded-md border border-indigo-200 dark:border-indigo-500/20 uppercase tracking-wider">
+                {post.category}
+              </span>
+            )}
+            <span className="inline-flex items-center gap-1 px-2 py-1 text-slate-500 dark:text-indigo-400/50 text-[10px] font-medium">
+              <Clock size={10} /> {readTime} min read
+            </span>
           </div>
-          
-          <h2 className="text-xl font-bold text-white leading-tight mb-2 group-hover:text-indigo-100 transition-colors">{post.title}</h2>
-          
-          <div className="text-indigo-100/80 leading-relaxed mb-4 line-clamp-3 prose prose-invert prose-sm">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
-          </div>
-      </div>
-      
-      {/* Footer Actions */}
-      <div className="pt-4 border-t border-white/5 flex justify-between items-center text-indigo-300 text-sm">
-         <div className="flex gap-6">
-            <button onClick={(e) => { e.stopPropagation(); openModal(post); }} className="flex gap-2 items-center hover:text-indigo-400 transition-all hover:scale-105"><MessageCircle size={20}/> <span className="font-medium">{commentsCount}</span></button>
-            <button onClick={(e) => { e.stopPropagation(); toggleRepost(post); }} className={`flex gap-2 items-center transition-all hover:scale-105 ${isReposted ? 'text-emerald-400' : 'hover:text-emerald-400'}`}><Repeat size={20}/> <span className="font-medium">{repostsArray.length}</span></button>
-            <button onClick={(e) => { e.stopPropagation(); toggleLike(post); }} className={`flex gap-2 items-center transition-all hover:scale-105 ${isLiked ? 'text-pink-500' : 'hover:text-pink-400'}`}><Heart size={20} className={isLiked ? 'fill-pink-500' : ''}/> <span className="font-medium">{likesArray.length}</span></button>
-         </div>
+        </div>
 
-         <div className="flex items-center gap-3">
-             <div className="flex items-center gap-1.5 text-indigo-400/40 text-xs hidden sm:flex"><Eye size={14}/> <span>{viewsCount}</span></div>
-             <button onClick={toggleBookmark} className={`transition-all hover:scale-110 ${isSaved ? 'text-yellow-400' : 'text-indigo-400/40 hover:text-white'}`}>
-                <Bookmark size={18} className={isSaved ? 'fill-current' : ''} />
-             </button>
-             <button onClick={handleShare} className="text-indigo-400/40 hover:text-white transition"><Share2 size={18} /></button>
-         </div>
+        <h2 className="text-xl font-bold text-slate-900 dark:text-white leading-tight mb-2 group-hover:text-indigo-700 dark:group-hover:text-indigo-100 transition-colors">{post.title}</h2>
+
+        <div className="text-slate-600 dark:text-indigo-100/80 leading-relaxed mb-4 line-clamp-3 prose prose-sm prose-slate dark:prose-invert">
+          <ReactMarkdown>{post.content}</ReactMarkdown>
+        </div>
+      </div>
+
+      {/* Footer Actions */}
+      <div className="pt-4 border-t border-slate-200 dark:border-white/5 flex justify-between items-center text-slate-500 dark:text-indigo-300 text-sm">
+        <div className="flex gap-6">
+          <button onClick={(e) => { e.stopPropagation(); openModal(post); }} className="flex gap-2 items-center hover:text-indigo-600 dark:hover:text-indigo-400 transition-all hover:scale-105"><MessageCircle size={20} /> <span className="font-medium">{commentsCount}</span></button>
+          <button onClick={(e) => { e.stopPropagation(); toggleRepost(post); }} className={`flex gap-2 items-center transition-all hover:scale-105 ${isReposted ? 'text-emerald-500 dark:text-emerald-400' : 'hover:text-emerald-500 dark:hover:text-emerald-400'}`}><Repeat size={20} /> <span className="font-medium">{repostsArray.length}</span></button>
+          <button onClick={(e) => { e.stopPropagation(); toggleLike(post); }} className={`flex gap-2 items-center transition-all hover:scale-105 ${isLiked ? 'text-pink-500' : 'hover:text-pink-500 dark:hover:text-pink-400'}`}><Heart size={20} className={isLiked ? 'fill-pink-500' : ''} /> <span className="font-medium">{likesArray.length}</span></button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-slate-400 dark:text-indigo-400/40 text-xs hidden sm:flex"><Eye size={14} /> <span>{viewsCount}</span></div>
+          <button onClick={toggleBookmark} className={`transition-all hover:scale-110 ${isSaved ? 'text-yellow-500 dark:text-yellow-400' : 'text-slate-400 dark:text-indigo-400/40 hover:text-slate-900 dark:hover:text-white'}`}>
+            <Bookmark size={18} className={isSaved ? 'fill-current' : ''} />
+          </button>
+          <button onClick={handleShare} className="text-slate-400 dark:text-indigo-400/40 hover:text-slate-900 dark:hover:text-white transition"><Share2 size={18} /></button>
+        </div>
       </div>
     </GlassCard>
   );

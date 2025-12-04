@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,7 +8,7 @@ export default {
   theme: {
     extend: {
       animation: {
-        blob: "blob 7s infinite", // Create a slow moving animation loop
+        blob: "blob 7s infinite",
         'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
       },
       keyframes: {
